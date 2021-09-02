@@ -2,8 +2,8 @@ from django.contrib.auth.decorators import login_required
 from django.http.response import HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 
-from snippets.models import Snippet
-from snippets.forms import SnippetForm
+from snippets.models import Snippet, Comment
+from snippets.forms import CommentForm, SnippetForm
 
 def top(request):
     snippets = Snippet.objects.all()
@@ -38,8 +38,22 @@ def snippet_edit(request, snippet_id):
     else:
         form = SnippetForm(instance=snippet)
 
-    return render(request, 'snippets/snippet_edit.html', {'form':form})
+    return render(request, 'snippets/snippet_edit.html', {'form': form})
 
 def snippet_detail(request, snippet_id):
     snippet = get_object_or_404(Snippet, pk=snippet_id)
-    return render(request, 'snippets/snippet_detail.html', {'snippet':snippet})
+    new_comment = CommentForm()
+
+    if request.method == "POST":
+        comment_from = CommentForm(request.POST)
+        if comment_from.is_valid():
+            comment_from = comment_from.save(commit=False)
+            comment_from.commented_to = snippet
+            comment_from.commented_by = request.user
+            comment_from.save()
+
+            comments = Comment.objects.filter(commented_to=snippet)
+            return render(request, 'snippets/snippet_detail.html', {'snippet':snippet, 'comments': comments, 'new_comment': new_comment})
+
+    comments = Comment.objects.filter(commented_to=snippet)
+    return render(request, 'snippets/snippet_detail.html', context={'snippet':snippet, 'comments': comments, 'new_comment': new_comment})
