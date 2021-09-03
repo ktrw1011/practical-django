@@ -17,6 +17,9 @@ class Snippet(models.Model):
     def __str__(self) -> str:
         return self.title
 
+    class Meta:
+        db_table = 'snippets'
+
 class Comment(models.Model):
     text = models.TextField("本文", blank=False)
     commented_at = models.DateTimeField("投稿日", auto_now_add=True)

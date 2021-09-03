@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     'snippets.apps.SnippetsConfig',
     'accounts.apps.AccountsConfig',
+    'snippets_ch2.apps.SnippetsCh2Config',
 
     'django_extensions',
     'django_bootstrap5',
@@ -134,3 +135,20 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGGING = {
+    'version':1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        }
+    },
+    'loggers': {
+        'django.db.backends': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+        }
+    }
+}
